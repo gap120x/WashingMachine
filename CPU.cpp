@@ -102,10 +102,12 @@ void CPU::manageState(void) {
 		isError = true;
 		showError();
 	}
+	else {
 	int switchNr = getActiveSwitch();
 	if (switchNr >= 0) {		
 		processData(switchNr);
 	
+	}
 	}
 }
 
