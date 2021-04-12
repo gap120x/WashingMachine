@@ -1,23 +1,14 @@
-// WashingMachine.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-// All systemc modules should include systemc.h header file
 #include "systemc.h"
-// Hello_world is module name
-SC_MODULE(hello_world) {
-    SC_CTOR(hello_world) {
-        // Nothing in constructor 
-    }
-    void say_hello() {
-        //Print "Hello World" to the console.
-        cout << "Hello World.\n";
-    }
-};
+#include "WashingMachine.h"
 
-// sc_main in top level function like in C++ main
+SYSTEM* top_module = NULL;
+
 int sc_main(int argc, char* argv[]) {
-    hello_world hello("HELLO");
-    // Print the hello world
-    hello.say_hello();
-    return(0);
+
+	cout << "Pralka Zostala Uruchomiona" << endl;
+
+	top_module = new SYSTEM("top_module");
+	sc_start();
+
+	return(0);
 }
