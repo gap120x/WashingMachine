@@ -6,7 +6,34 @@
 
 using namespace std;
 
-void CPU::launchProgram(int id) {
+void CPU::display(string switchesLine) {
+	cout << "|--------------------------|" << endl;
+	cout << switchesLine << endl;
+	cout << "|SW| 05| 04| 03| 02| 01 |00| " << endl;
+
+
+}
+
+
+void CPU::printWasher(int programId, bool isError)//informacje o prze³¹cznikach(SW)- ON czy OFF 
+{
+
+	std::stringstream swStrm;
+	swStrm << "|SW|";
+
+	for (int i = 5; i >= 0; i--) {
+		if (activeSwitches[i] <= 0) {
+			swStrm << "OFF|";
+		}
+		else {
+			swStrm << " ON|";
+		}
+	}
+	display(swStrm.str());
+}
+
+void CPU::launchProgram(int id)//wyœwietla informacjê o uruchomionym programie 
+{
 	while (true) {
 		wait(4);
 		if (id < 6 && CPU::processing == id && CPU::isProcessed) {
@@ -15,56 +42,14 @@ void CPU::launchProgram(int id) {
 	}
 }
 
-void CPU::display(string switchesLine) {
-	cout << "|--------------------------|" << endl;
-	cout << switchesLine << endl;
-	cout << "|SW| 05| 04| 03| 02| 01 |00| " << endl;
-
-}
-
-void CPU::printWasher(int programId, bool isError) {
-
-	std::stringstream swStrm;
-
-	swStrm << "|SW|";
-
-
-	if (isError) {
-
-		for (int i = 5; i >= 0; i--) {
-			if (activeSwitches[i] <= 0) {
-				swStrm << "OFF|";
-			}
-			else {
-				swStrm << " ON|";
-			}
-		}
-	}
-	else {
-
-		for (int i = 5; i >= 0; i--) {
-			if (activeSwitches[i] <= 0) {
-				swStrm << "OFF|";
-			}
-			else {
-				swStrm << " ON|";
-			}
-		}
-
-	}
-
-	display(swStrm.str());
-}
-
-
 void CPU::processData(int switchNr) {
 	isProcessed = true;
 	processing = switchNr;
 	
 }
 
-
-int CPU::countActiveProgramSwitches(void) {
+int CPU::countActiveSwitches(void)//zlicza aktywne prze³¹czniki(SW) 
+{
 	int active = 0;
 
 	for (int i = 0; i < 6; i++) {
@@ -76,7 +61,8 @@ int CPU::countActiveProgramSwitches(void) {
 	return active;
 }
 
-int CPU::getActiveSwitch(void) {
+int CPU::getActiveSwitch(void)//pobierz prze³¹cznik w stanie ON-1 
+{
 	for (int i = 0; i < 6; i++) {
 		if (activeSwitches[i] == 1) {
 			return i;
@@ -85,7 +71,8 @@ int CPU::getActiveSwitch(void) {
 	return -1;
 }
 
-void CPU::toggle(int inputData) {
+void CPU::toggle(int inputData)//Zmiana stanu prze³¹cznika z 1 na 0 i na odwrót 
+{
 	if (activeSwitches[inputData] == 1) {
 		activeSwitches[inputData] = 0;
 	}
@@ -94,9 +81,10 @@ void CPU::toggle(int inputData) {
 	}
 }
 
-void CPU::manageState(void) {
+void CPU::manageState(void)//Zarz¹dzanie programami - uruchomienie danego programu gdy OK, gdy Error wyœwietla informacjê 
+{
 
-	int active = countActiveProgramSwitches();
+	int active = countActiveSwitches();
 
 	if (active > 1) {
 		isError = true;
@@ -105,17 +93,16 @@ void CPU::manageState(void) {
 	else {
 	int switchNr = getActiveSwitch();
 	if (switchNr >= 0) {		
-		processData(switchNr);
-	
+		processData(switchNr);	
 	}
 	}
 }
 
-void CPU::showError(void) {
+void CPU::showError(void)//Wyœwietl B³¹d w przypadku wybrania wiêcej ni¿ jednego SW 
+{
 	cout << "Wybrano wiecej niz jeden SW!. " << endl;
 
 }
-
 void CPU::handle(void) {
 	printWasher(-1, false);
 
@@ -146,12 +133,12 @@ void CPU::handle(void) {
 			}
 			wait();
 			isSwitchDataProcessed.write(1);
-			printWasher(activeProgramId, isError);
+			printWasher(activeProgramId, isError);			
 		}
+		
 		wait();
 	}
 }
-
 
 void CPU::launchProgram1(void) {
 	CPU::launchProgram(0);

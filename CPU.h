@@ -23,7 +23,7 @@ SC_MODULE(CPU)
 	void launchProgram(int id);
 	void display(string switchesLine);
 	void printWasher(int programId, bool isError);
-	int countActiveProgramSwitches();
+	int countActiveSwitches();
 	void handle(void);
 	void manageState(void);
 	void toggle(int inputData);

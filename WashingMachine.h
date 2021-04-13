@@ -14,7 +14,7 @@ SC_MODULE(SYSTEM) {
 	sc_signal<bool> cpuProcessSwitchesState;
 
 
-	SC_CTOR(SYSTEM) : clockSignal("clockSignal", 1, SC_NS) { // 500 nano sekund
+	SC_CTOR(SYSTEM) : clockSignal("clockSignal", 100, SC_NS) { // 100 nano sekund
 
 		cpu = new CPU("cpu");
 		switches = new SWITCHES("sw");

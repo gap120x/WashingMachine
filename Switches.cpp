@@ -1,11 +1,13 @@
 #include <systemc.h>
 #include "Switches.h"
 
-void SWITCHES::clear(void) {
+void SWITCHES::clear(void)//wyczyœæ konsole 
+{
 	system("cls");
 }
 
-int SWITCHES::readUserInput(void) {
+int SWITCHES::readUserInput(void) //odczytaj z klawiatury
+{
 	bool wynik = false;
 	int result;	
 	while (!wynik) {	
@@ -23,6 +25,7 @@ int SWITCHES::readUserInput(void) {
 			cin.ignore();
 			cout << "Nieprawidlowy Wybor! Wprowadz wartosc liczbowa od 0 do 5.";			
 			wynik = false;
+			
 		}
 	}
 	return result;
@@ -30,20 +33,23 @@ int SWITCHES::readUserInput(void) {
 	
 }
 
-void SWITCHES::sendInput(int userInput) {
+void SWITCHES::sendInput(int userInput)//wyœlij wejœcie do CPU 
+{
 	wait();
 	isSending.write(1);
 	input.write(userInput);
 	wait();
 }
 
-void SWITCHES::closeSendingOutput(void) {
+void SWITCHES::closeSendingOutput(void)//zakoñcz wysy³anie  
+{
 	wait();
 	isSending.write(0);
 	wait();
 }
 
-void SWITCHES::read(void) {
+void SWITCHES::read(void)//funckja g³ówna
+{
 	int processed = 1;
 
 	while (true) {

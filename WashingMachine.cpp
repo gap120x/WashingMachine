@@ -9,6 +9,7 @@ int sc_main(int argc, char* argv[]) {
 
 	top_module = new SYSTEM("top_module");
 	sc_start();
+	sc_stop();
 
 	return(0);
 }
