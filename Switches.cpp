@@ -1,68 +1,88 @@
 #include <systemc.h>
 #include "Switches.h"
 
-void SWITCHES::clear(void)//wyczyœæ konsole 
+
+//funkcja czyszcz¹ca konsolê
+void SWITCHES::clearConsole(void)
 {
 	system("cls");
 }
 
-int SWITCHES::readUserInput(void) //odczytaj z klawiatury
+//funkcja sprawdzaj¹ca ci¹g znaków wpisany przez u¿ytkownika
+int SWITCHES::readUserInput(void)
 {
-	bool wynik = false;
+	bool temp_result = false;
 	int result;	
-	while (!wynik) {	
+	while (!temp_result) {
 		if (!(cin >> result))
 		{
 			result = -1;
 		}
-		if(result < 6 && result !=-1)
+		//je¿eli u¿ytkownik wybierzê poprawny prze³¹cznik nastêpujê wyjœcie
+		//z pêtli while poprzez zmianê wartoœci zmiennej temp_result
+		if(result < 6 && result > -1)
 		{
-			wynik = true;
+			temp_result = true;
 		}
+		// w przypadku podania przez u¿ytkonika niepoprawnych danych wyœwietlany jest stosowny komunikat
 		else
 		{
 			cin.clear();
 			cin.ignore();
 			cout << "Nieprawidlowy Wybor! Wprowadz wartosc liczbowa od 0 do 5.";			
-			wynik = false;
+			temp_result = false;
 			
 		}
 	}
+
+	//zwrócenie wprowadzonych przez u¿ytkownika danych
 	return result;
 	
 	
 }
 
-void SWITCHES::sendInput(int userInput)//wyœlij wejœcie do CPU 
+//funkcja wysy³aj¹ca wybrany przez numer prze³¹cznika do modu³u CPU
+void SWITCHES::sendUserInput(int userInput) 
 {
+	//wstrzymanie funkcji przez jeden cykl zegarowy
 	wait();
+	//zakomunikowanie modu³owi CPU o nadchodz¹cych danych, tzw handshake
 	isSending.write(1);
+	//zapisanie wybranego numeru prze³¹cznika do wyjœcia modu³u
 	input.write(userInput);
 	wait();
 }
 
-void SWITCHES::closeSendingOutput(void)//zakoñcz wysy³anie  
+
+//zakoñczenie wysy³ania wybranego prze³¹cznika do CPU
+void SWITCHES::closeSendingOutput(void)  
 {
 	wait();
+	//zakomunikowanie CPU o zakoñczeniu wysy³ania danych poprzez zmianê wartoœci
+	//portu isSending na logiczne false
 	isSending.write(0);
 	wait();
 }
 
-void SWITCHES::read(void)//funckja g³ówna
-{
-	int processed = 1;
 
+//funkcja inicjalizuj¹ca odczyt danych wprowadzonych przez u¿ytkownika
+//jest uruchamiana przy starcie symulacji w konstruktorze modu³u
+void SWITCHES::initRead(void)
+{
+	//nieskoñczona pêtla, która sprawdza input u¿ytkownika
 	while (true) {
-		if (processed == 1) {
+
+		//pobranie danych od u¿ytkownika
 			int userInput = readUserInput();
 
-			clear();
+			//wyczyszczenie konsoli
+			clearConsole();
 
-			sendInput(userInput);
-		}
+			//wys³anie danych do CPU
+			sendUserInput(userInput);
+		
+			//zakoñczenie wysy³ania danych do CPU
+			closeSendingOutput();
 
-		closeSendingOutput();
-
-		processed = isProcessed.read();
 	}
 }

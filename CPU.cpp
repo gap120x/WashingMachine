@@ -6,49 +6,66 @@
 
 using namespace std;
 
-void CPU::display(string switchesLine) {
-	cout << "|--------------------------|" << endl;
+//funkcja, wyœwietlaj¹ca stany poszczególnych prze³¹czników; emituje wygl¹d przedniego panelu pralki
+void CPU::showSWStates(string switchesLine) {
+	cout << "________________________________________" << endl;
 	cout << switchesLine << endl;
-	cout << "|SW| 05| 04| 03| 02| 01 |00| " << endl;
-
+	cout << "[SW] [05 ] [04 ] [03 ] [02 ] [01 ] [00 ] " << endl;
+	cout << "[--------------------------------------]" << endl;
 
 }
 
 
-void CPU::printWasher(int programId, bool isError)//informacje o prze³¹cznikach(SW)- ON czy OFF 
+//funkcja przechodz¹ca przez tablicê prze³¹czników, sprawdzaj¹ca ich stan 
+//i aktualizuj¹ca informacjê o ich stanie na konsoli
+void CPU::washerPanel() 
 {
-
+	//ci¹g znaków, informuj¹cy o stanie ka¿ego prze³¹cznika
 	std::stringstream swStrm;
-	swStrm << "|SW|";
+	swStrm << "[SW]";
 
+	//pêtla przechodz¹ca po tablicy prze³¹czników i sprawdzaj¹ca ich stany
 	for (int i = 5; i >= 0; i--) {
 		if (activeSwitches[i] <= 0) {
-			swStrm << "OFF|";
+			//w zale¿noœci od wartoœci w tablicy nastêpuje konkatenacja 
+			//s³ownego opisu stanu prze³¹cznika do ci¹gu znaków
+			swStrm << " [OFF]";
 		}
 		else {
-			swStrm << " ON|";
+			swStrm << " [ON ]";
 		}
 	}
-	display(swStrm.str());
+	//wywo³anie funkcji wyœwietlaj¹cej stany prze³¹czników; w argumencie przesy³amy informacjê o stanach prze³¹czników
+	showSWStates(swStrm.str());
 }
 
-void CPU::launchProgram(int id)//wyœwietla informacjê o uruchomionym programie 
-{
-	while (true) {
-		wait(4);
-		if (id < 6 && CPU::processing == id && CPU::isProcessed) {
-			cout << "Uruchomiono Program Nr: " << (id + 1) << " (Predkosc Wirowania: " <<programs[id]<< ")\n";
-		}
-	}
-}
 
+
+//funkcja, która rozpoczyna proces uruchamiania nowego programu
 void CPU::processData(int switchNr) {
+
+	//rozpoczêcie uruchamiania programu
 	isProcessed = true;
-	processing = switchNr;
+	//zapisanie id uruchamianego programu do zmiennej
+	inProgress = switchNr;
 	
 }
 
-int CPU::countActiveSwitches(void)//zlicza aktywne prze³¹czniki(SW) 
+
+//funkcja uruchamiaj¹ca program o przes³anym w argumencie ID programu
+void CPU::launchProgram(int id)
+{
+	while (true) {
+		wait(4);
+		if (id < 6 && CPU::inProgress == id && CPU::isProcessed) {
+			//koncepcja jest taka, ¿e id programu jest wartoœci¹ liczbow¹ o jeden mniejsz¹ od numeru programu
+			cout << "Uruchomiono Program Nr: " << (id + 1) << " (Predkosc Wirowania: " << washerPrograms[id] << ")\n";
+		}
+	}
+}
+
+//funkcja zwracaj¹ca iloœæ w³¹czonych prze³¹czników
+int CPU::countActiveSwitches(void) 
 {
 	int active = 0;
 
@@ -61,7 +78,8 @@ int CPU::countActiveSwitches(void)//zlicza aktywne prze³¹czniki(SW)
 	return active;
 }
 
-int CPU::getActiveSwitch(void)//pobierz prze³¹cznik w stanie ON-1 
+//funkcja zwracaj¹ca w³¹czony/aktywny prze³¹cznik
+int CPU::getActiveSwitch(void)
 {
 	for (int i = 0; i < 6; i++) {
 		if (activeSwitches[i] == 1) {
@@ -71,25 +89,31 @@ int CPU::getActiveSwitch(void)//pobierz prze³¹cznik w stanie ON-1
 	return -1;
 }
 
-void CPU::toggle(int inputData)//Zmiana stanu prze³¹cznika z 1 na 0 i na odwrót 
+//funkcja zmieniaj¹ca stan wybranego prze³¹cznika
+void CPU::toggle(int programChoice)
 {
-	if (activeSwitches[inputData] == 1) {
-		activeSwitches[inputData] = 0;
+	if (activeSwitches[programChoice] == 1) {
+		activeSwitches[programChoice] = 0;
 	}
 	else {
-		activeSwitches[inputData] = 1;
+		activeSwitches[programChoice] = 1;
 	}
 }
 
-void CPU::manageState(void)//Zarz¹dzanie programami - uruchomienie danego programu gdy OK, gdy Error wyœwietla informacjê 
-{
 
+//Zarz¹dzanie programami - uruchomienie danego programu, gdy tylko jeden prze³¹cznik jest aktywny/w³¹czony;
+//gdy wiêcej ni¿ jeden prze³¹cznik aktywny, wyœwietla informacjê o b³êdzie
+void CPU::manageState(void)
+{
+	//zliczenie aktywnych/w³¹czonych prze³¹czników
 	int active = countActiveSwitches();
 
+	//je¿eli aktywnych prze³¹czników jest wiêcej ni¿ jeden wyœwietla b³¹d
 	if (active > 1) {
 		isError = true;
 		showError();
 	}
+	//w innym wypadku odpowiedni program jest uruchamiany
 	else {
 	int switchNr = getActiveSwitch();
 	if (switchNr >= 0) {		
@@ -98,13 +122,17 @@ void CPU::manageState(void)//Zarz¹dzanie programami - uruchomienie danego progra
 	}
 }
 
-void CPU::showError(void)//Wyœwietl B³¹d w przypadku wybrania wiêcej ni¿ jednego SW 
+
+//funkcja wyœwietlaj¹ca b³¹d, je¿eli jest wiêcej ni¿ jeden aktywny/w³¹czony prze³¹cznik 
+void CPU::showError(void)
 {
 	cout << "Wybrano wiecej niz jeden SW!. " << endl;
 
 }
-void CPU::handle(void) {
-	printWasher(-1, false);
+
+//funkcja obs³uguj¹ca prze³¹czanie programów
+void CPU::switchHandler(void) {
+	washerPanel();
 
 	int data;
 	int previousProgramID;
@@ -113,14 +141,14 @@ void CPU::handle(void) {
 	while (true) {
 		wasErrorPreviously = isError;
 		previousProgramID = activeProgramId;
-		isSwitchDataProcessed.write(0);
+		switchProgramEnded.write(0);
 		isProcessed = false;
 		isError = false;
 		activeProgramId = -1;
 
-		if (isSwitchSending.read() == 1) {
+		if (switchReceiving.read() == 1) {
 
-			data = (int)inputData.read();
+			data = (int)programChoice.read();
 
 			if (data >= 0 && data <= 5) {
 				toggle(data);
@@ -132,14 +160,16 @@ void CPU::handle(void) {
 				manageState();
 			}
 			wait();
-			isSwitchDataProcessed.write(1);
-			printWasher(activeProgramId, isError);			
+			switchProgramEnded.write(1);
+			washerPanel();
 		}
 		
 		wait();
 	}
 }
 
+
+//funkcjê uruchamiaj¹ce poszczególne programy/modu³y pralki
 void CPU::launchProgram1(void) {
 	CPU::launchProgram(0);
 }

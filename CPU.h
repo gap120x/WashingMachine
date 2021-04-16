@@ -7,26 +7,49 @@ using namespace std;
 
 SC_MODULE(CPU)
 {
-	sc_in<bool> clock;
-	sc_in<bool> reset;
-	sc_in<sc_uint<16>> inputData;
-	sc_in<bool> isSwitchSending;
-	sc_out<bool> isSwitchDataProcessed;
 
-	const int programs[6] = { 0, 800, 900, 1000, 1100, 1200 };
+	//porty modu³u
+
+	//wejœcie zegarowe
+	sc_in<bool> clk;
+
+	//wybrany prze³¹cznik (który uruchamia odpowiedni modu³/programów pralki)
+	sc_in<sc_uint<16>> programChoice;
+
+	//wejœcie sygnalizuj¹ce o wysy³aniu danych z modu³u Switches
+	sc_in<bool> switchReceiving;
+
+	//wyjœcie sygnalizuj¹ce o przetworzeniu wybrania ¿¹danego programu
+	sc_out<bool> switchProgramEnded;
+
+	//tablica przechowuj¹ca prêdkoœci wirowania poszczególnych programów pralki
+	const int washerPrograms[6] = { 0, 800, 900, 1000, 1100, 1200 };
+
+	//pocz¹tkowy stan prze³¹czników (0 - wy³¹czony, 1 - w³¹czony)
 	int activeSwitches[6] = { 0, 0, 0, 0, 0,0};
+
+	//zmienna przechowuj¹ca numer aktywnego programu, startowa wartoœæ to -1
 	int activeProgramId = -1;
+
+	//zmienna przechowuj¹ca informacjê o ostatnim b³êdzie
+	//b³¹d rozumiemy jako wybranie 2 programów na raz (2 prze³¹czniki w³¹czone/aktywne w tym samym momencie)
 	bool isError = false;
-	int processing = 0;
+	
+	//zmienna przechowuj¹ca identyfikator programu, który aktualnie jest uruchamiany
+	int inProgress = 0;
+
+	//zmienna informuj¹ca o zmianie programu pralki
 	bool isProcessed = false;
 
+
+	//funckje modu³u
 	void launchProgram(int id);
-	void display(string switchesLine);
-	void printWasher(int programId, bool isError);
+	void showSWStates(string switchesLine);
+	void washerPanel();
 	int countActiveSwitches();
-	void handle(void);
+	void switchHandler(void);
 	void manageState(void);
-	void toggle(int inputData);
+	void toggle(int programChoice);
 	void processData(int switchNr);
 	int getActiveSwitch(void);
 	void showError(void);
@@ -38,17 +61,20 @@ SC_MODULE(CPU)
 	void launchProgram5();
 	void launchProgram6();
 
+	//konstruktor modu³u CPU
 	SC_CTOR(CPU) {
-		SC_CTHREAD(handle, clock.pos());
 
-		SC_CTHREAD(launchProgram1, clock.pos());
-		SC_CTHREAD(launchProgram2, clock.pos());
-		SC_CTHREAD(launchProgram3, clock.pos());
-		SC_CTHREAD(launchProgram4, clock.pos());
-		SC_CTHREAD(launchProgram5, clock.pos());
-		SC_CTHREAD(launchProgram6, clock.pos());
+		//w¹tki wra¿liwe na wzrastaj¹ce zbocze zegarowe, uruchamiane przy starcie symulacji
+		SC_CTHREAD(switchHandler, clk.pos());
 
-		reset_signal_is(reset, true);
+		SC_CTHREAD(launchProgram1, clk.pos());
+		SC_CTHREAD(launchProgram2, clk.pos());
+		SC_CTHREAD(launchProgram3, clk.pos());
+		SC_CTHREAD(launchProgram4, clk.pos());
+		SC_CTHREAD(launchProgram5, clk.pos());
+		SC_CTHREAD(launchProgram6, clk.pos());
+
+		
 	}
 
 };

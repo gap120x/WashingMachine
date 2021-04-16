@@ -18,6 +18,18 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CPU.cpp" />
+    <ClCompile Include="HexDisplay.cpp" />
+    <ClCompile Include="Switches.cpp" />
+    <ClCompile Include="WashMachineTopModule.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CPU.h" />
+    <ClInclude Include="HexDisplay.h" />
+    <ClInclude Include="Switches.h" />
+    <ClInclude Include="WashMachineTopModule.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -147,18 +159,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="CPU.cpp" />
-    <ClCompile Include="HexDisplay.cpp" />
-    <ClCompile Include="Switches.cpp" />
-    <ClCompile Include="WashingMachine.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CPU.h" />
-    <ClInclude Include="HexDisplay.h" />
-    <ClInclude Include="Switches.h" />
-    <ClInclude Include="WashingMachine.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
