@@ -20,12 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CPU.cpp" />
+    <ClCompile Include="CPU2.cpp" />
     <ClCompile Include="HexDisplay.cpp" />
     <ClCompile Include="Switches.cpp" />
     <ClCompile Include="WashMachineTopModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPU.h" />
+    <ClInclude Include="CPU2.h" />
     <ClInclude Include="HexDisplay.h" />
     <ClInclude Include="Switches.h" />
     <ClInclude Include="WashMachineTopModule.h" />

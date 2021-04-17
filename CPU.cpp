@@ -48,6 +48,20 @@ void CPU::processData(int switchNr) {
 	isProcessed = true;
 	//zapisanie id uruchamianego programu do zmiennej
 	inProgress = switchNr;
+	if (switchNr == 5) {
+	
+		cout << "CPU1 Wysyla dane do CPU2" << endl;
+		isSendingToCpu2.write(1);
+		
+		outputDataCpu2.write(switchNr);
+		
+		do {
+			wait();
+		} while (!isCpu2Reading.read());
+		
+		isSendingToCpu2.write(0);
+		
+	}
 	
 }
 
@@ -57,7 +71,7 @@ void CPU::launchProgram(int id)
 {
 	while (true) {
 		wait(4);
-		if (id < 6 && CPU::inProgress == id && CPU::isProcessed) {
+		if (id < 5 && CPU::inProgress == id && CPU::isProcessed) {
 			//koncepcja jest taka, ¿e id programu jest wartoœci¹ liczbow¹ o jeden mniejsz¹ od numeru programu
 			cout << "Uruchomiono Program Nr: " << (id + 1) << " (Predkosc Wirowania: " << washerPrograms[id] << ")\n";
 		}
@@ -184,7 +198,4 @@ void CPU::launchProgram4(void) {
 }
 void CPU::launchProgram5(void) {
 	CPU::launchProgram(4);
-}
-void CPU::launchProgram6(void) {
-	CPU::launchProgram(5);
 }

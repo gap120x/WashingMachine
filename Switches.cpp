@@ -27,9 +27,10 @@ int SWITCHES::readUserInput(void)
 		// w przypadku podania przez u¿ytkonika niepoprawnych danych wyœwietlany jest stosowny komunikat
 		else
 		{
+			cout << "Nieprawidlowy Wybor! Wprowadz wartosc liczbowa od 0 do 5.";
 			cin.clear();
 			cin.ignore();
-			cout << "Nieprawidlowy Wybor! Wprowadz wartosc liczbowa od 0 do 5.";			
+					
 			temp_result = false;
 			
 		}

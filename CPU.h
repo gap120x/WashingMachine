@@ -41,6 +41,11 @@ SC_MODULE(CPU)
 	//zmienna informuj¹ca o zmianie programu pralki
 	bool isProcessed = false;
 
+	sc_out<sc_uint<16>> outputDataCpu2;
+	sc_in<bool> isCpu2Reading;
+	sc_out<bool> isSendingToCpu2;
+
+
 
 	//funckje modu³u
 	void launchProgram(int id);
@@ -59,7 +64,7 @@ SC_MODULE(CPU)
 	void launchProgram3();
 	void launchProgram4();
 	void launchProgram5();
-	void launchProgram6();
+
 
 	//konstruktor modu³u CPU
 	SC_CTOR(CPU) {
@@ -72,7 +77,7 @@ SC_MODULE(CPU)
 		SC_CTHREAD(launchProgram3, clk.pos());
 		SC_CTHREAD(launchProgram4, clk.pos());
 		SC_CTHREAD(launchProgram5, clk.pos());
-		SC_CTHREAD(launchProgram6, clk.pos());
+		
 
 		
 	}
