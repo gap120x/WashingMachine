@@ -23,7 +23,7 @@ void CPU_2::switchHandler(void) {
 		if (id == 5) {
 			
 			cout << "CPU_2: Otrzymal dane od CPU1" << endl;		
-			cout << "Uruchomiono Program Nr: 6 " << " (Predkosc Wirowania: " << washerPrograms[id] << ")\n";
+			cout << "Uruchomiono Program Nr: 6 "<< "\n";
 			
 
 		}

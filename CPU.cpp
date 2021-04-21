@@ -60,8 +60,9 @@ void CPU::processData(int switchNr) {
 		} while (!isCpu2Reading.read());
 		
 		isSendingToCpu2.write(0);
-		
+		//wait();
 	}
+
 	
 }
 
@@ -73,7 +74,7 @@ void CPU::launchProgram(int id)
 		wait(4);
 		if (id < 5 && CPU::inProgress == id && CPU::isProcessed) {
 			//koncepcja jest taka, ¿e id programu jest wartoœci¹ liczbow¹ o jeden mniejsz¹ od numeru programu
-			cout << "Uruchomiono Program Nr: " << (id + 1) << " (Predkosc Wirowania: " << washerPrograms[id] << ")\n";
+			cout << "Uruchomiono Program Nr: " << (id + 1) << "\n";
 		}
 	}
 }
@@ -113,6 +114,18 @@ void CPU::toggle(int programChoice)
 		activeSwitches[programChoice] = 1;
 	}
 }
+void CPU::sendToHex(int value) {
+
+	isSendingToHex.write(1);
+
+	outputHexDisplayData.write(value);
+
+	do {
+		wait();
+	} while (!areHexesReading.read());
+
+	isSendingToHex.write(0);
+}
 
 
 //Zarz¹dzanie programami - uruchomienie danego programu, gdy tylko jeden prze³¹cznik jest aktywny/w³¹czony;
@@ -131,8 +144,18 @@ void CPU::manageState(void)
 	else {
 	int switchNr = getActiveSwitch();
 	if (switchNr >= 0) {		
-		processData(switchNr);	
+		//activeProgramId = switchNr;
+		
+		processData(switchNr);
+		sendToHex(switchNr);
+
 	}
+	else
+	{
+		sendToHex(-1);
+		//activeProgramId = -1;
+	}
+
 	}
 }
 
@@ -141,6 +164,7 @@ void CPU::manageState(void)
 void CPU::showError(void)
 {
 	cout << "Wybrano wiecej niz jeden SW!. " << endl;
+	sendToHex(-2);
 
 }
 
@@ -173,12 +197,12 @@ void CPU::switchHandler(void) {
 				activeProgramId = previousProgramID;
 				manageState();
 			}
-			wait();
+			// wait();
 			switchProgramEnded.write(1);
 			washerPanel();
 		}
-		
 		wait();
+		
 	}
 }
 
