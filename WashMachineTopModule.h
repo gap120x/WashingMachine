@@ -3,6 +3,7 @@
 #include "CPU.h"
 #include "CPU2.h"
 #include "HexDisplay.h"
+#include "ErrorLed.h"
 //tzw top modu³, scalaj¹cy modu³y CPU i Switches
 SC_MODULE(SYSTEM) {
 	//wskaŸniki na modu³y CPU i Switches
@@ -10,6 +11,7 @@ SC_MODULE(SYSTEM) {
 	CPU_2* cpu2;
 	SWITCHES* switches;
 	HEXDISPLAY* hex;
+	LED* led;
 
 	//sygna³ zegarowy wspólny dla obu modu³ów
 	sc_clock clockSignal;
@@ -18,6 +20,8 @@ SC_MODULE(SYSTEM) {
 	sc_signal<sc_uint<16>> washerProgramData{ "washerProgramData" };
 	sc_signal<sc_uint<16>> cpu2Data{ "cpu2Data" };
 	sc_signal<sc_int<16>> hexDisplayData{ "hexDisplayData" };
+	sc_signal<bool> ledDisplayData{ "ledDisplayData" };
+
 
 	sc_signal<bool> swOutputSignal;
 	sc_signal<bool> cpuProcessingSignal;
@@ -25,6 +29,10 @@ SC_MODULE(SYSTEM) {
 	sc_signal<bool> cpu2ReadingCpu1Data;
 	sc_signal<bool> cpuSendingToHex;
 	sc_signal<bool> hexesReadingCpuData;
+	sc_signal<bool> cpuSendingToLed;
+	sc_signal<bool> ledReadingCpuData;
+
+
 
 	//konstruktor top modu³u
 	SC_CTOR(SYSTEM) : clockSignal("clockSignal", 100, SC_NS) { 
@@ -34,6 +42,8 @@ SC_MODULE(SYSTEM) {
 		cpu = new CPU("cpu");
 		switches = new SWITCHES("sw");
 		hex = new HEXDISPLAY("hex");
+		led = new LED("led");
+
 
 		//przypisanie portów modu³ów do odpowiednich sygna³ów
 		cpu->clk(clockSignal);
@@ -46,7 +56,9 @@ SC_MODULE(SYSTEM) {
 		cpu->isSendingToHex(cpuSendingToHex);
 		cpu->areHexesReading(hexesReadingCpuData);
 		cpu->outputHexDisplayData(hexDisplayData);
-
+		cpu->isSendingToLed(cpuSendingToLed);
+		cpu->isLedReading(ledReadingCpuData);
+		cpu->outputLedDisplayData(ledDisplayData);
 
 		switches->clk(clockSignal);
 		switches->input(washerProgramData);
@@ -61,6 +73,11 @@ SC_MODULE(SYSTEM) {
 		hex->dataInput(hexDisplayData);		
 		hex->isDataBeingDelivered(cpuSendingToHex);
 		hex->isReading(hexesReadingCpuData);
+
+		led->clock(clockSignal);
+		led->dataInput(ledDisplayData);
+		led->isDataBeingDelivered(cpuSendingToLed);
+		led->isReading(ledReadingCpuData);
 	}
 
 	//destruktor

@@ -18,7 +18,7 @@ void CPU::showSWStates(string switchesLine) {
 
 //funkcja przechodz¹ca przez tablicê prze³¹czników, sprawdzaj¹ca ich stan 
 //i aktualizuj¹ca informacjê o ich stanie na konsoli
-void CPU::washerPanel() 
+void CPU::washerPanel()
 {
 	//ci¹g znaków, informuj¹cy o stanie ka¿ego prze³¹cznika
 	std::stringstream swStrm;
@@ -49,21 +49,21 @@ void CPU::processData(int switchNr) {
 	//zapisanie id uruchamianego programu do zmiennej
 	inProgress = switchNr;
 	if (switchNr == 5) {
-	
+
 		cout << "CPU1 Wysyla dane do CPU2" << endl;
 		isSendingToCpu2.write(1);
-		
+
 		outputDataCpu2.write(switchNr);
-		
+
 		do {
 			wait();
 		} while (!isCpu2Reading.read());
-		
+
 		isSendingToCpu2.write(0);
 		//wait();
 	}
 
-	
+
 }
 
 
@@ -80,7 +80,7 @@ void CPU::launchProgram(int id)
 }
 
 //funkcja zwracaj¹ca iloœæ w³¹czonych prze³¹czników
-int CPU::countActiveSwitches(void) 
+int CPU::countActiveSwitches(void)
 {
 	int active = 0;
 
@@ -127,6 +127,18 @@ void CPU::sendToHex(int value) {
 	isSendingToHex.write(0);
 }
 
+void CPU::sendToLed(bool value) {
+	isSendingToLed.write(1);
+
+	outputLedDisplayData.write(value);
+
+	do {
+		wait();
+	} while (!isLedReading.read());
+
+	isSendingToLed.write(0);
+	
+}
 
 //Zarz¹dzanie programami - uruchomienie danego programu, gdy tylko jeden prze³¹cznik jest aktywny/w³¹czony;
 //gdy wiêcej ni¿ jeden prze³¹cznik aktywny, wyœwietla informacjê o b³êdzie
@@ -142,29 +154,30 @@ void CPU::manageState(void)
 	}
 	//w innym wypadku odpowiedni program jest uruchamiany
 	else {
-	int switchNr = getActiveSwitch();
-	if (switchNr >= 0) {		
-		//activeProgramId = switchNr;
-		
-		processData(switchNr);
-		sendToHex(switchNr);
+		int switchNr = getActiveSwitch();
+		if (switchNr >= 0) {
+			//activeProgramId = switchNr;
 
-	}
-	else
-	{
-		sendToHex(-1);
-		//activeProgramId = -1;
-	}
+			processData(switchNr);
+			sendToHex(switchNr);
+			sendToLed(0);
+
+		}
+		else
+		{
+			sendToHex(-1);
+			sendToLed(0);
+			//activeProgramId = -1;
+		}
 
 	}
 }
-
-
 //funkcja wyœwietlaj¹ca b³¹d, je¿eli jest wiêcej ni¿ jeden aktywny/w³¹czony prze³¹cznik 
 void CPU::showError(void)
 {
 	cout << "Wybrano wiecej niz jeden SW!. " << endl;
 	sendToHex(-2);
+	sendToLed(1);
 
 }
 
@@ -197,12 +210,12 @@ void CPU::switchHandler(void) {
 				activeProgramId = previousProgramID;
 				manageState();
 			}
-			// wait();
+			 //wait();
 			switchProgramEnded.write(1);
 			washerPanel();
 		}
 		wait();
-		
+
 	}
 }
 

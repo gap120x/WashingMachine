@@ -30,6 +30,9 @@
     <ClCompile Include="CPU2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ErrorLed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPU.h">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CPU2.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorLed.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

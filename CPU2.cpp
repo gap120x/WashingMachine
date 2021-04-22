@@ -19,7 +19,8 @@ void CPU_2::switchHandler(void) {
 
 		int id = (int)dataInput.read();
 
-		isReading.write(0);
+		isReading.write(0);	
+
 		if (id == 5) {
 			
 			cout << "CPU_2: Otrzymal dane od CPU1" << endl;		

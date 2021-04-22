@@ -11,7 +11,7 @@ void HEXDISPLAY::ShowOnHex(void) {
 
 	isReading.write(0);
 
-	wait();
+	//wait();
 
 	while (true) {
 

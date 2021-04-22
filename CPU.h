@@ -49,6 +49,10 @@ SC_MODULE(CPU)
 	sc_in<bool> areHexesReading;
 	sc_out<sc_int<16>> outputHexDisplayData;
 
+	sc_in<bool> isLedReading;
+	sc_out<bool> isSendingToLed;
+	sc_out<bool> outputLedDisplayData;
+
 
 	//funckje modu³u
 	void launchProgram(int id);
@@ -62,6 +66,7 @@ SC_MODULE(CPU)
 	int getActiveSwitch(void);
 	void showError(void);
 	void sendToHex(int value);
+	void sendToLed(bool value);
 
 	void launchProgram1();
 	void launchProgram2();
