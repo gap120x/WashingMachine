@@ -3,7 +3,7 @@
 SC_MODULE(SWITCHES) {
 
 	//porty modu³u
-	
+	sc_in<bool> isProcessed;
 	//wejœcie zegarowe
 	sc_in<bool> clk;
 	//wyjœcie danych wpisanych przez u¿ytkownika (wybrany prze³¹cznik)

@@ -60,7 +60,7 @@ void CPU::processData(int switchNr) {
 		} while (!isCpu2Reading.read());
 
 		isSendingToCpu2.write(0);
-		//wait();
+		wait();
 	}
 
 
@@ -89,7 +89,6 @@ int CPU::countActiveSwitches(void)
 			active++;
 		}
 	}
-
 	return active;
 }
 
@@ -137,7 +136,7 @@ void CPU::sendToLed(bool value) {
 	} while (!isLedReading.read());
 
 	isSendingToLed.write(0);
-	
+
 }
 
 //Zarz¹dzanie programami - uruchomienie danego programu, gdy tylko jeden prze³¹cznik jest aktywny/w³¹czony;
@@ -159,14 +158,16 @@ void CPU::manageState(void)
 			//activeProgramId = switchNr;
 
 			processData(switchNr);
-			sendToHex(switchNr);
 			sendToLed(0);
+			sendToHex(switchNr);
+			
 
 		}
 		else
 		{
-			sendToHex(-1);
 			sendToLed(0);
+			sendToHex(-1);
+		
 			//activeProgramId = -1;
 		}
 
@@ -176,8 +177,9 @@ void CPU::manageState(void)
 void CPU::showError(void)
 {
 	cout << "Wybrano wiecej niz jeden SW!. " << endl;
-	sendToHex(-2);
 	sendToLed(1);
+	sendToHex(-2);
+
 
 }
 
@@ -210,7 +212,7 @@ void CPU::switchHandler(void) {
 				activeProgramId = previousProgramID;
 				manageState();
 			}
-			 //wait();
+			wait();
 			switchProgramEnded.write(1);
 			washerPanel();
 		}
@@ -218,7 +220,6 @@ void CPU::switchHandler(void) {
 
 	}
 }
-
 
 //funkcjê uruchamiaj¹ce poszczególne programy/modu³y pralki
 void CPU::launchProgram1(void) {

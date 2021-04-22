@@ -35,7 +35,7 @@ SC_MODULE(SYSTEM) {
 
 
 	//konstruktor top modu³u
-	SC_CTOR(SYSTEM) : clockSignal("clockSignal", 100, SC_NS) { 
+	SC_CTOR(SYSTEM) : clockSignal("clockSignal", 500, SC_NS) { 
 
 		//stworzenie instancji modu³ów
 		cpu2 = new CPU_2("cpu2");
@@ -63,6 +63,7 @@ SC_MODULE(SYSTEM) {
 		switches->clk(clockSignal);
 		switches->input(washerProgramData);
 		switches->isSending(swOutputSignal);
+		switches->isProcessed(cpuProcessingSignal);
 		
 		cpu2->clock(clockSignal);
 		cpu2->dataInput(cpu2Data);
@@ -86,8 +87,6 @@ SC_MODULE(SYSTEM) {
 		delete cpu2;
 		delete switches;
 		delete hex;
-
-
 	}
 };
 

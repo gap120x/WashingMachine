@@ -70,10 +70,12 @@ void SWITCHES::closeSendingOutput(void)
 //jest uruchamiana przy starcie symulacji w konstruktorze modu³u
 void SWITCHES::initRead(void)
 {
+	int processed = 1;
 	//nieskoñczona pêtla, która sprawdza input u¿ytkownika
 	while (true) {
 
 		//pobranie danych od u¿ytkownika
+		 if (processed == 1) {
 			int userInput = readUserInput();
 
 			//wyczyszczenie konsoli
@@ -81,9 +83,10 @@ void SWITCHES::initRead(void)
 
 			//wys³anie danych do CPU
 			sendUserInput(userInput);
-		
+		}
 			//zakoñczenie wysy³ania danych do CPU
 			closeSendingOutput();
+			processed = isProcessed.read();
 
 	}
 }
